@@ -32,12 +32,14 @@ def main():
     output_files = args.output_files.split(',')
 
     data_frames = []
-    for input_file in input_files:
+    for index, input_file in enumerate(input_files):
+        print(f'Reading #{index+1} of {len(input_files)} files')
         data_frames.append(filehandling.read_file(input_file))
 
     if args.bbox:
         bbox = args.bbox.split(',')
         for index, data_frame in enumerate(data_frames):
+            print(f'Cutting out #{index+1} of {len(data_frames)}')
             data_frames[index] = transformation.cutout(data_frame, bbox)
 
     center = None
@@ -45,11 +47,14 @@ def main():
         center = args.center.split(',')
 
     if len(data_frames) > 1:
+        print('Scaling data')
         data_frames = scaling.scale_multiple_data(data_frames, args.xfactor, yfactor=args.yfactor, scalecenter=args.scale_center, point=center)
     else:
+        print('Scaling data')
         data_frames = [scaling.scale_data(data_frames[0], args.xfactor, yfactor=args.yfactor, point=center)]
 
     for index, output_file in enumerate(output_files):
+        print(f'Writing #{index+1} of {len(output_files)} files')
         filehandling.write_file(output_file, data_frames[index])
 
 
